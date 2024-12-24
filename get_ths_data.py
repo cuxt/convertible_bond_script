@@ -125,36 +125,6 @@ def save_to_csv(data, basic_data, yesterday):
         csvwriter.writerows(desired_data)
 
 
-def upload_to_r2(trade_day):
-    cf = env.json('CF')
-    account_id = cf['account_id']
-    access_key_id = cf['access_key_id']
-    secret_access_key = cf['secret_access_key']
-
-    # 创建 S3 客户端
-    s3 = boto3.client(
-        's3',
-        region_name='auto',
-        endpoint_url=f'https://{account_id}.r2.cloudflarestorage.com',
-        aws_access_key_id=access_key_id,
-        aws_secret_access_key=secret_access_key
-    )
-
-    object_key = trade_day + '.csv'
-    file_path = f'data/{object_key}'
-    bucket_name = 'cloud'
-    with open(file_path, 'rb') as file:
-        s3.upload_fileobj(
-            Fileobj=file,
-            Bucket=bucket_name,
-            Key=f'bond/{object_key}',
-            ExtraArgs={
-                'ContentType': 'text/csv; charset=utf-8',
-                'ContentDisposition': f'attachment; filename={object_key}'
-            }
-        )
-
-
 def is_trade_day(date):
     if is_workday(date):
         if date.isoweekday() < 6:
@@ -222,11 +192,6 @@ def main():
         basic_data = ths.get_basic_data(payload)
         # print(basic_data)
         save_to_csv(data_pool, basic_data, trade_day)
-
-        try:
-            upload_to_r2(trade_day)
-        except Exception as e:
-            send_msg(f"可转债（上传R2失败）：{e}")
 
 
 if __name__ == '__main__':
