@@ -120,6 +120,7 @@ def save_to_csv(data, basic_data, yesterday):
         csvwriter.writerow(new_headers)
         csvwriter.writerows(desired_data)
 
+    print(f"{yesterday}数据已保存到data/{yesterday}.csv")
 
 def is_trade_day(date):
     if is_workday(date):
@@ -146,7 +147,7 @@ def send_msg(content):
 
 
 def main():
-    # today = datetime(2024, 11, 22)
+    # today = datetime(2024, 12, 27)
     today = datetime.now()
     trade_day = today - timedelta(days=1)
     if is_trade_day(trade_day):
@@ -188,6 +189,8 @@ def main():
         basic_data = ths.get_basic_data(payload)
         # print(basic_data)
         save_to_csv(data_pool, basic_data, trade_day)
+    else:
+        print("非交易日")
 
 
 if __name__ == '__main__':

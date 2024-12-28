@@ -46,28 +46,47 @@ def main():
     start_date = last_friday_date.strftime("%Y%m%d")
     end_date = friday_date.strftime("%Y%m%d")
 
-    create_db(start_date, end_date)
+    created_files = []  # 用于存储创建的文件名
 
-    excel_list = []
-    for config_file in config_list:
-        print(f'{config_file}')
+    try:
+        create_db(start_date, end_date)
+        created_files.append("data.db")
 
-        try:
-            config = Dynaconf(
-                start_date=start_date,
-                end_date=end_date,
-                settings_files=[config_file]
-            )
-            excel_name = parse(config)
-            excel_list.append(excel_name)
-        except Exception as e:
-            if send_error:
-                send_msg(f'{config_file}\n' + str(e))
-            else:
-                print(e)
+        excel_list = []
+        for config_file in config_list:
+            print(f'{config_file}')
+            try:
+                config = Dynaconf(
+                    start_date=start_date,
+                    end_date=end_date,
+                    settings_files=[config_file]
+                )
+                excel_name = parse(config)
+                excel_list.append(excel_name)
+                created_files.append(excel_name)
+            except Exception as e:
+                if send_error:
+                    send_msg(f'{config_file}\n' + str(e))
+                else:
+                    print(e)
 
-    create_zip(excel_list, "data.zip")
-    send_mail()
+        create_zip(excel_list, "data.zip")
+        # created_files.append("data.zip")
+
+        send_mail()
+
+    finally:
+        # 程序结束后删除创建的文件
+        print("开始清理创建的文件...")
+        for file_path in created_files:
+            try:
+                os.remove(file_path)
+                print(f"已删除文件: {file_path}")
+            except FileNotFoundError:
+                print(f"文件未找到: {file_path}")
+            except Exception as e:
+                print(f"删除文件 {file_path} 失败: {e}")
+        print("清理完成。")
 
 
 def create_db(start_date, end_date):
