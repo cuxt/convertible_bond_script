@@ -6,7 +6,6 @@ from time import sleep
 import requests
 from chinese_calendar import is_workday
 from environs import Env
-import boto3
 
 env = Env()
 env.read_env()
@@ -51,13 +50,9 @@ class THS:
 
     @staticmethod
     def get_access_token(retries=3, delay=5):
-        ths_user = env.json('THS_USER')
-
         baseurl = 'https://api.xbxin.com/ths/token'
         payload = {
-            'action': 'rt',
-            'username': ths_user['username'],
-            'password': ths_user['password']
+            'key': env.str('KEY')
         }
 
         response = requests.post(baseurl, json=payload)
@@ -67,7 +62,7 @@ class THS:
             return None
 
         response = response.json()
-        refresh_token = response['data']['refresh_token']
+        refresh_token = response['data']['token']
         url = 'https://ft.10jqka.com.cn/api/v1/get_access_token'
         headers = {"ContentType": "application/json", "refresh_token": refresh_token}
 
