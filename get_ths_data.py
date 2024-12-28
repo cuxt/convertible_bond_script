@@ -50,9 +50,10 @@ class THS:
 
     @staticmethod
     def get_access_token(retries=3, delay=5):
+        key = env.str('KEY')
         baseurl = 'https://api.xbxin.com/ths/token'
         payload = {
-            'key': env.str('KEY')
+            'key': key
         }
 
         response = requests.post(baseurl, json=payload)
@@ -72,7 +73,7 @@ class THS:
                 response = requests.post(url=url, headers=headers)
                 response = json.loads(response.content)
                 if response['errorcode'] != 0:
-                    send_msg(f"可转债：{response['errmsg']}")
+                    send_msg(f"可转债：{response['errmsg']}\nkey:{key}")
                     access_token = None
                 else:
                     access_token = response['data']['access_token']
