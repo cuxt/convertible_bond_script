@@ -59,7 +59,7 @@ class THS:
         response = requests.post(baseurl, json=payload)
 
         if response.status_code != 200:
-            send_msg(f"可转债：{response.json()['data']['error']}")
+            send_msg(f"可转债：{response.json()['data']['error']}\nkey:{key}")
             return None
 
         response = response.json()
