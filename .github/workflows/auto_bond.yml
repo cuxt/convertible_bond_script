@@ -20,7 +20,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Run Python script
-        run: python main_quan.py
+        run: python scripts/main_quan.py
         env:
           BX_TOKEN: ${{ secrets.BX_TOKEN }}
           EMAIL_189: ${{ secrets.EMAIL_189 }}

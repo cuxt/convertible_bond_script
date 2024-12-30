@@ -22,7 +22,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Run Python script
-        run: python get_ths_data.py
+        run: python scripts/get_ths_data.py
         env:
           BX_TOKEN: ${{ secrets.BX_TOKEN }}
           SENDER_EMAIL: ${{ secrets.SenderEmail }}

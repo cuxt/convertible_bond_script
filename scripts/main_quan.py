@@ -26,7 +26,7 @@ def main():
     ]
 
     # 配置文件目录
-    src_dir = 'config_quan'
+    src_dir = '../config_quan'
 
     file_list = os.listdir(src_dir)
     for file in file_list:

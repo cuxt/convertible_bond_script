@@ -1,0 +1,60 @@
+# 定义共同的配置部分
+common: &common
+  action: "median"
+  conditions: &common_conditions
+    sort: null
+    sort_type: ""
+    limit: -1
+    ratio_total:
+      - "债券类型 = '可转债'"
+  column: "转股溢价率(%)"
+  file_name_format: true
+  column_name:
+    ratio:
+      - "日期"
+      - "纯债到期收益率 > 3% 的转债个数"
+      - "转债总数"
+    median:
+      - "日期"
+      - "中位数"
+    avg:
+      - "日期"
+      - "平均数"
+    max:
+      - "日期"
+      - "最大值"
+    min:
+      - "日期"
+      - "最小值"
+    std_0:
+      - "日期"
+      - "有偏样本标准差"
+    std_1:
+      - "日期"
+      - "无偏样本标准差"
+    check:
+      - "数据表"
+      - "缺失数据"
+
+# 配置列表
+configurations:
+  - name: "配置1"
+    action: "ratio"
+    <<: *common
+    conditions:
+      <<: *common_conditions
+      main:
+        - "债券类型 = '可转债'"
+        - "转换价值>100"
+        - "转换价值<=110"
+    file_name: "100-110平价的估值"
+
+  - name: "配置2"
+    <<: *common
+    conditions:
+      <<: *common_conditions
+      main:
+        - "债券类型 = '可转债'"
+        - "转换价值>110"
+        - "转换价值<=120"
+    file_name: "110-120平价的估值"
