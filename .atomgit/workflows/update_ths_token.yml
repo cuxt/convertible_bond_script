@@ -1,0 +1,28 @@
+name: Update THS Token
+
+on:
+  schedule:
+    - cron: '0 5 * *  TUE-SAT'
+  watch:
+    types: [ started ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Python script
+        run: python scripts/update_ths_token.py
+        env:
+          KEY: ${{ secrets.KEY }}
+          THS_USER: ${{ secrets.THS_USER }}

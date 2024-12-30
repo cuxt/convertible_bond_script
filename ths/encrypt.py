@@ -2,8 +2,8 @@ import base64
 import hashlib
 
 import requests
-from Crypto.Cipher import PKCS1_v1_5
-from Crypto.PublicKey import RSA
+from Cryptodome.Cipher import PKCS1_v1_5
+from Cryptodome.PublicKey import RSA
 
 
 class ThsEncrypt(object):
@@ -76,7 +76,7 @@ class ThsEncrypt(object):
 
 
 def main():
-    ths = ThsEncrypt('', '')
+    ths = ThsEncrypt('ztzqj022', 'NpBnXd89')
     cookie = ths.get_cookie()
     print(cookie)
 
