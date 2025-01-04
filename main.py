@@ -2,9 +2,9 @@ from datetime import datetime, timedelta
 
 from tqdm import tqdm
 
+from src.bond_dao import BondDao
 from utils.config_utils import get_config
 from utils.logging_utils import setup_logging
-from src.bond_calc import BondCalc
 
 
 def main():
@@ -23,10 +23,10 @@ def main():
 def get_result(config):
     # 数据周期：上周五-本周五
     # today = datetime.now()
-    today=datetime(2023, 1, 1)
+    today = datetime(2023, 1, 1)
     last_friday, this_friday = get_friday_range(today)
 
-    bond = BondCalc()
+    bond = BondDao()
 
     total_days = (this_friday - last_friday).days + 1
     with tqdm(total=total_days, desc="进度", dynamic_ncols=True) as pbar:
@@ -39,7 +39,7 @@ def get_result(config):
             if config.action == 'ratio':
                 data = bond.ratio(current_date)
 
-                # print(data)
+                print(data)
             pbar.update(1)
 
     bond.close()

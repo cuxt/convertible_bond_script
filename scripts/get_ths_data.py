@@ -2,11 +2,10 @@ import csv
 import json
 from datetime import datetime, timedelta
 from time import sleep
-
 import requests
 from environs import Env
-
 from utils.utils import is_trade_day
+from pathlib import Path
 
 env = Env()
 env.read_env()
@@ -116,7 +115,9 @@ def save_to_csv(data, basic_data, yesterday):
                    "转股溢价率(%)", "转股市盈率", "转股市净率", "套利空间", "平价/底价", "期限(年)", "发行日期",
                    "票面利率/发行参考利率(%)", "交易市场", "债券类型", "债券最新评级", "债券余额"]
 
-    with open(f'data/{yesterday}.csv', 'w', newline='', encoding='utf-8') as csvfile:
+    current_dir = Path(__file__).resolve().parent
+    file_path = current_dir.parent / 'data' / f'{yesterday}.csv'
+    with open(file_path, 'w', newline='', encoding='utf-8') as csvfile:
         csvwriter = csv.writer(csvfile)
         csvwriter.writerow(new_headers)
         csvwriter.writerows(desired_data)
@@ -142,7 +143,7 @@ def send_msg(content):
 
 
 def main():
-    # today = datetime(2024, 12, 27)
+    # today = datetime(2025, 1, 5)
     today = datetime.now()
     trade_day = today - timedelta(days=1)
     if is_trade_day(trade_day):
