@@ -8,7 +8,6 @@ from sqlalchemy import create_engine, inspect
 from tqdm import tqdm
 
 from bondday import BondDay
-from fileoperator import FileOperator
 from dynaconf import Dynaconf
 import smtplib
 from email.mime.multipart import MIMEMultipart
@@ -17,6 +16,8 @@ from email.mime.base import MIMEBase
 from email import encoders
 import os
 from environs import Env
+
+from utils.file_utils import save_to_excel
 
 
 def main():
@@ -173,7 +174,7 @@ def parse(config):
 
     # 保存数据到Excel
     if len(data_list) > 1:
-        FileOperator.save_to_excel(excel_name, data_list)
+        save_to_excel(excel_name, data_list)
 
     return f"{excel_name}.xlsx"
 

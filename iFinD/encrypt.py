@@ -6,7 +6,7 @@ from Cryptodome.Cipher import PKCS1_v1_5
 from Cryptodome.PublicKey import RSA
 
 
-class ThsEncrypt(object):
+class iFinDEncrypt(object):
     def __init__(self, username, password):
         self.username = username
         self.password = password
@@ -76,7 +76,7 @@ class ThsEncrypt(object):
 
 
 def main():
-    ths = ThsEncrypt('ztzqj022', 'NpBnXd89')
+    ths = iFinDEncrypt('ztzqj022', 'NpBnXd89')
     cookie = ths.get_cookie()
     print(cookie)
 

@@ -4,12 +4,10 @@ on:
   push:
     branches:
       - master
-  schedule:
-    - cron: '0 7 * *  TUE-SAT'
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Black list
         uses: Yikun/hub-mirror-action@master

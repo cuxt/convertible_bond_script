@@ -4,8 +4,9 @@ from datetime import datetime, timedelta
 from time import sleep
 
 import requests
-from chinese_calendar import is_workday
 from environs import Env
+
+from utils.utils import is_trade_day
 
 env = Env()
 env.read_env()
@@ -121,12 +122,6 @@ def save_to_csv(data, basic_data, yesterday):
         csvwriter.writerows(desired_data)
 
     print(f"{yesterday}数据已保存到data/{yesterday}.csv")
-
-def is_trade_day(date):
-    if is_workday(date):
-        if date.isoweekday() < 6:
-            return True
-    return False
 
 
 def send_msg(content):

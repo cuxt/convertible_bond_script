@@ -1,10 +1,7 @@
 import json
-import os
-
 import requests
-from dotenv import load_dotenv
-
-from .encrypt import ThsEncrypt
+from .encrypt import iFinDEncrypt
+from environs import Env
 
 
 class THS(object):
@@ -14,7 +11,7 @@ class THS(object):
         self.cookie = self.get_cookie()
 
     def get_cookie(self):
-        ths_encrypt = ThsEncrypt(self.username, self.password)
+        ths_encrypt = iFinDEncrypt(self.username, self.password)
         return ths_encrypt.get_cookie()
 
     def get_access_token(self):
@@ -23,10 +20,10 @@ class THS(object):
 
         :return: access_token
         """
-        # 加载 .env 文件中的环境变量
-        load_dotenv()
+        env = Env()
+        env.read_env()
 
-        refresh_token = os.getenv('REFRESHTOKEN')
+        refresh_token = env.str("REFRESH_TOKEN")
         print(refresh_token)
         url = 'https://ft.10jqka.com.cn/api/v1/get_access_token'
         header = {"ContentType": "application/json", "refresh_token": refresh_token}
@@ -75,11 +72,15 @@ class THS(object):
             'Content-Length': '129',
             'Accept': 'application/json, text/plain, */*',
             'Origin': 'http://ft.10jqka.com.cn',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36',
-            'sw8': '1-OGU2ZGYzNjctYzZhZC00M2FmLTk3OTgtNmQwYzgyODJiMDFk-OGE3YTQ2YWMtMTE2Y00NDY0LWI0YmUtZmFmYTVlNmQ5ODM1-0-aWZpbmQtamF2YS10aGVtYXRpYy1iZmY8YnJvd3Nlcj4=-cGNfY2xpZW50XzEuMA==-L3Jvb3Q=-ZnQuMTBqcWthLmNvbS5jbg==',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                          'Chrome/84.0.4147.105 Safari/537.36',
+            'sw8': '1-OGU2ZGYzNjctYzZhZC00M2FmLTk3OTgtNmQwYzgyODJiMDFk'
+                   '-OGE3YTQ2YWMtMTE2Y00NDY0LWI0YmUtZmFmYTVlNmQ5ODM1-0-aWZpbmQtamF2YS10aGVtYXRpYy1iZmY8YnJvd3Nlcj4'
+                   '=-cGNfY2xpZW50XzEuMA==-L3Jvb3Q=-ZnQuMTBqcWthLmNvbS5jbg==',
             'Content-Type': 'application/x-www-form-urlencoded',
             'Cookie': f'jgbsessid={jgbsessid}',
-            'Referer': 'http://ft.10jqka.com.cn/standardgwapi/bff/thematic_bff/topic/B0005.html?version=1.10.12.405&mac=74-4C-A1-D5-77-AA',
+            'Referer': 'http://ft.10jqka.com.cn/standardgwapi/bff/thematic_bff/topic/B0005.html?version=1.10.12.405'
+                       '&mac=74-4C-A1-D5-77-AA',
             'Accept-Encoding': 'gzip, deflate',
             'Accept-Language': 'zh-CN,zh;q=0.9,zh-TW;q=0.8,en;q=0.7'
         }

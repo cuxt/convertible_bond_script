@@ -1,6 +1,6 @@
 import numpy as np
 
-from . import api
+from utils.utils import is_trade_day
 from .bonddb import BondDB
 
 
@@ -27,10 +27,11 @@ class BondDay(object):
 
         :param current_date: 日期
         :param conditions: sql
+        :param database: 数据库名
         :return: 元组(日期, 筛选后剩余数量, 总数)
         """
         bond_day = current_date.strftime('%Y-%m-%d')
-        if not api.is_trade_day(current_date):
+        if not is_trade_day(current_date):
             return bond_day, None, None
 
         table_name = current_date.strftime('%Y%m%d')
@@ -55,10 +56,11 @@ class BondDay(object):
         :param column: 需要计算的列
         :param conditions: sql
         :param model: median,avg
+        :param database: 数据库名
         :return: 元组(日期, 中位数/平均数)
         """
         bond_day = current_date.strftime('%Y-%m-%d')
-        if not api.is_trade_day(current_date):
+        if not is_trade_day(current_date):
             return bond_day, None
 
         table_name = current_date.strftime('%Y%m%d')

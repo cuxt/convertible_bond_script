@@ -6,7 +6,7 @@ import requests
 from tqdm import tqdm
 
 from bondday import BondDay
-from fileoperator import FileOperator
+from utils.file_utils import save_to_excel
 
 remind = True
 
@@ -130,7 +130,7 @@ def parse(config_file, default_config):
 
     # 保存数据到Excel
     if len(data_list) > 1:
-        FileOperator.save_to_excel(excel_name, data_list)
+        save_to_excel(excel_name, data_list)
 
 
 def send_msg(message, action="qywx", webhook="H", msg_type="text", url="https://api.xbxin.com/msg"):

@@ -1,10 +1,8 @@
 name: Get THS Data
 
 on:
-  schedule:
-    - cron: '0 5 * *  TUE-SAT'
-#  watch:
-#    types: started
+#  schedule:
+#    - cron: '0 5 * *  TUE-SAT'
 
 jobs:
   build:
