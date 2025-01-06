@@ -101,6 +101,6 @@ if __name__ == "__main__":
             "债券类型 = '可转债'"
         ]
     }
-    bond_day = datetime.date.today()
+    bond_day = datetime.date(2024, 12, 26)
     data = BondDB.query(bond_day, '码', conditions["main"], database='../convertible_bond')
     print(data)

@@ -1,5 +1,5 @@
+import datetime
 import numpy as np
-
 from utils.utils import is_trade_day
 from .bonddb import BondDB
 
@@ -92,3 +92,23 @@ class BondDay(object):
         except Exception as e:
             print('\n', '出现异常', e)
             print(data)
+
+
+def main():
+    BondDay.db_init()
+    conditions = {
+        "main": [
+            '"债券类型" = \'可转债\'',
+            '"转换价值" <= 80',
+        ],
+        "ratio_total": [
+            '"债券类型" = \'可转债\''
+        ]
+    }
+    bond_date = datetime.date(2024, 11, 20)
+    data = BondDay.ratio(bond_date, conditions)
+    print(data)
+
+
+if __name__ == '__main__':
+    main()
