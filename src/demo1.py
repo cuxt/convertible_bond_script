@@ -12,7 +12,7 @@ from utils.utils import is_trade_day
 
 root_path = Path(__file__).resolve().parent.parent
 
-mode = 'remote'  # local | remote
+mode = 'local'  # local | remote
 
 env = Env()
 env.read_env()
@@ -24,6 +24,8 @@ days_ahead = 4 - today.weekday()
 
 current_friday_date = today + timedelta(days=days_ahead)
 last_friday_date = current_friday_date - timedelta(days=7)
+# current_friday_date = datetime.date(2025, 1, 3)
+# last_friday_date = datetime.date(2018, 1, 1)
 
 start_date = last_friday_date.strftime("%Y%m%d")
 end_date = current_friday_date.strftime("%Y%m%d")
@@ -40,8 +42,8 @@ def main():
     config_path = root_path / 'config' / 'demo' / 'demo1.toml'
     # 输出地址
     output_path = root_path / 'output' / f'{start_date}-{end_date}.csv'
-    with open(config_path, 'r', encoding='utf-8') as f:
-        config = toml.load(f)
+    with open(config_path, 'r', encoding='utf-8') as file:
+        config = toml.load(file)
 
     if mode == 'remote':
         fetch_data()

@@ -215,4 +215,10 @@ ctype = 'avg'
 main = ["\"债券类型\" = '可转债'", '"收盘价" < 100']
 ratio_total = ["\"债券类型\" = '可转债'"]
 
-
+[shoupanjiaxiaoyuchunzaishouyi]
+title = '收盘价<纯债收益'
+column = '转股溢价率(%)'
+ctype = 'ratio'
+[shoupanjiaxiaoyuchunzaishouyi.conditions]
+main = ["\"债券类型\" = '可转债'", '"收盘价" < "纯债价值"']
+ratio_total = ["\"债券类型\" = '可转债'"]

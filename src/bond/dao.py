@@ -37,6 +37,7 @@ class BondDao(object):
             else:
                 cursor.execute(sql)
         except Exception as e:
+            print(f"SQL: {sql}")
             print(f"Error executing SQL query: {e}")
             return []
         # 获取查询结果

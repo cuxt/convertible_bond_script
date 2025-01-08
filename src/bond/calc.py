@@ -82,28 +82,34 @@ class BondCalc(object):
             data = dao.query(query)
 
         if isinstance(data, list) and len(data) == 0:
-            return filename, '-'
+            return filename, None
         elif isinstance(data, int):
             print(f"\n{filename}:{data}")
             return filename, None
 
+        # 过滤None值
+        filtered_data = [x[0] for x in data if x[0] is not None]
+
+        if not filtered_data:
+            return filename, None
+
         try:
             if model == 'median':
-                return filename, np.median(data)
+                return filename, np.median(filtered_data)
             elif model == 'avg':
-                return filename, np.mean(data)
+                return filename, np.mean(filtered_data)
             elif model == 'max':
-                return filename, max(data)
+                return filename, max(filtered_data)
             elif model == 'min':
-                return filename, min(data)
+                return filename, min(filtered_data)
             elif model == 'std_0':
                 # 有偏样本标准差
-                return filename, np.std(data, ddof=0)
+                return filename, np.std(filtered_data, ddof=0)
             elif model == 'std_1':
                 # 无偏样本标准差
-                return filename, np.std(data, ddof=1)
+                return filename, np.std(filtered_data, ddof=1)
         except Exception as e:
-            print('\n', '出现异常', e)
+            print('\n', f'match_func({model}): ', e)
             print(data)
 
 
@@ -118,7 +124,7 @@ def main():
         ]
     }
     bond_calc = BondCalc()
-    data = bond_calc.math_func('20241120', conditions, '转股溢价率(%)')
+    data = bond_calc.math_func('20180102', conditions, '转股溢价率(%)')
     print(data)
 
 
