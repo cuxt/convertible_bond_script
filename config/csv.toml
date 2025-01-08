@@ -8,7 +8,7 @@ ignore_errors = true
 [columns]
 "代码" = "string"
 "名称" = "string"
-"交易日期" = "string"  # 或者根据需要转换为日期类型
+"交易日期" = "string"
 "前收盘价"= "float"
 "开盘价" = "float"
 "最高价" = "float"

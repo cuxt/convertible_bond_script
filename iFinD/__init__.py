@@ -1,18 +1,35 @@
 import json
 import requests
 from .encrypt import iFinDEncrypt
-from environs import Env
 
 
-class THS(object):
+class IFinD(object):
     def __init__(self, username, password):
+        self.base_url = 'https://quantapi.51ifind.com/api/v1'
         self.username = username
         self.password = password
         self.cookie = self.get_cookie()
+        self.refresh_token = self.get_refresh_token()
+        self.access_token = self.get_access_token()
+        self.headers = {
+            "Content-Type": "application/json",
+            "access_token": self.access_token
+        }
 
     def get_cookie(self):
         ths_encrypt = iFinDEncrypt(self.username, self.password)
         return ths_encrypt.get_cookie()
+
+    def get_refresh_token(self):
+        url = self.base_url + '/get_refresh_token'
+        headers = {
+            'user-Agent': self.cookie['version'],
+            'pragma': 'no-cache',
+            'cookie': f"THSFT_USERID={self.cookie['THSFT_USERID']}; jgbsessid={self.cookie['jgbsessid']}; userid={self.cookie['userid']}; ifindlang=cn"
+        }
+
+        response = requests.get(url, headers=headers)
+        return response.json()['data']['refresh_token']
 
     def get_access_token(self):
         """
@@ -20,13 +37,8 @@ class THS(object):
 
         :return: access_token
         """
-        env = Env()
-        env.read_env()
-
-        refresh_token = env.str("REFRESH_TOKEN")
-        print(refresh_token)
-        url = 'https://ft.10jqka.com.cn/api/v1/get_access_token'
-        header = {"ContentType": "application/json", "refresh_token": refresh_token}
+        url = self.base_url + '/get_access_token'
+        header = {"ContentType": "application/json", "refresh_token": self.refresh_token}
         response = requests.post(url=url, headers=header)
 
         print(response)
@@ -42,10 +54,7 @@ class THS(object):
         :param form_data: 请求参数
         :return:
         """
-        #  获取 access_token
-        access_token = self.get_access_token()
-
-        requestHeaders = {"Content-Type": "application/json", "access_token": access_token}
+        requestHeaders = {"Content-Type": "application/json", "access_token": self.access_token}
 
         # 发送POST请求
         response = requests.post(request_url, headers=requestHeaders, data=json.dumps(form_data))
@@ -100,3 +109,30 @@ class THS(object):
         except requests.exceptions.RequestException as e:
             print(e)
             return
+
+    def get_data_pool(self, trade_day):
+        formData = {"reportname": "p00868", "functionpara": {"edate": trade_day, "zqlx": "全部"},
+                    "outputpara": "jydm,jydm_mc,p00868_f002,p00868_f016,p00868_f007,p00868_f006,p00868_f001,"
+                                  "p00868_f028,p00868_f011,p00868_f005,p00868_f014,p00868_f008,p00868_f003,"
+                                  "p00868_f026,p00868_f023,p00868_f004,p00868_f012,p00868_f017,p00868_f024,"
+                                  "p00868_f019,p00868_f027,p00868_f018,p00868_f022,p00868_f021,p00868_f015,"
+                                  "p00868_f010,p00868_f025,p00868_f009,p00868_f029,p00868_f013,p00868_f020,p00868_f030"}
+
+        response = requests.post(self.base_url + '/data_pool', headers=self.headers, data=json.dumps(formData))
+
+        if response.status_code == 200:
+            data = response.json()
+            return data["tables"][0]["table"]
+        else:
+            print(f"请求出错: {response.json()}")
+            return None
+
+    def get_basic_data(self, payload):
+        response = requests.post(self.base_url + '/basic_data_service', headers=self.headers, json=payload)
+
+        if response.status_code == 200:
+            data = response.json()
+            return data["tables"]
+        else:
+            print(f"可转债: {response.json()}")
+            return None

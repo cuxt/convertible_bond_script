@@ -29,11 +29,16 @@ class BondDao(object):
         if not self.con:
             raise RuntimeError("Database connection is not established.")
         cursor = self.con.cursor()
-        if params:
-            # 执行语句时使用参数
-            cursor.execute(sql, params)
-        else:
-            cursor.execute(sql)
+
+        try:
+            if params:
+                # 执行语句时使用参数
+                cursor.execute(sql, params)
+            else:
+                cursor.execute(sql)
+        except Exception as e:
+            print(f"Error executing SQL query: {e}")
+            return []
         # 获取查询结果
         result = cursor.fetchall()
         return result

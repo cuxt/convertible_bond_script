@@ -1,0 +1,218 @@
+[pingjiaguzhi_80-100]
+title = '80-100平价的估值'
+column = '转股溢价率(%)'
+ctype = 'median'
+
+[pingjiaguzhi_80-100.conditions]
+main = [ "\"债券类型\" = '可转债'", '"转换价值" > 80', '"转换价值" <= 100']
+ratio_total = ["\"债券类型\" = '可转债'"]
+
+[pingjiaguzhi_100-110]
+title = '100-110平价的估值'
+column = '转股溢价率(%)'
+ctype = 'median'
+[pingjiaguzhi_100-110.conditions]
+main = ["\"债券类型\" = '可转债'", '"转换价值" > 100', '"转换价值" <= 110']
+ratio_total = ["\"债券类型\" = '可转债'"]
+
+[pingjiaguzhi_110-120]
+title = '110-120平价的估值'
+column = '转股溢价率(%)'
+ctype = 'median'
+[pingjiaguzhi_110-120.conditions]
+main = ["\"债券类型\" = '可转债'", '"转换价值" > 110', '"转换价值" <= 120']
+ratio_total = ["\"债券类型\" = '可转债'"]
+
+[pingjiaguzhi_120-130]
+title = '120-130平价的估值'
+column = '转股溢价率(%)'
+ctype = 'median'
+[pingjiaguzhi_120-130.conditions]
+main = ["\"债券类型\" = '可转债'", '"转换价值" > 120', '"转换价值" <= 130']
+ratio_total = ["\"债券类型\" = '可转债'"]
+
+[pingjiaguzhi_130]
+title = '130以上平价的估值'
+column = '转股溢价率(%)'
+ctype = 'median'
+[pingjiaguzhi_130.conditions]
+main = ["\"债券类型\" = '可转债'", '"转换价值" > 130']
+ratio_total = ["\"债券类型\" = '可转债'"]
+
+[baiyuan]
+title = '百元平价转债转股溢价率'
+column = '转股溢价率(%)'
+ctype = 'median'
+[baiyuan.conditions]
+main = ["\"债券类型\" = '可转债'", '"转换价值" >= 98', '"转换价值" <= 102']
+ratio_total = ["\"债券类型\" = '可转债'"]
+
+[guguzhi]
+title = '偏股型转债转股溢价率'
+column = '转股溢价率(%)'
+ctype = 'median'
+[guguzhi.conditions]
+main = ["\"债券类型\" = '可转债'", '(("转换价值" - "纯债价值") / "纯债价值") > 0.2']
+ratio_total = ["\"债券类型\" = '可转债'"]
+
+[gujiage]
+title = '偏股型转债价格'
+column = '收盘价'
+ctype = 'median'
+[gujiage.conditions]
+main = ["\"债券类型\" = '可转债'", '(("转换价值" - "纯债价值") / "纯债价值") > 0.2']
+ratio_total = ["\"债券类型\" = '可转债'"]
+
+[gushuliang]
+title = '偏股型转债数量'
+column = '转股溢价率(%)'
+ctype = 'ratio'
+[gushuliang.conditions]
+main = ["\"债券类型\" = '可转债'", '(("转换价值" - "纯债价值") / "纯债价值") > 0.2']
+ratio_total = ["\"债券类型\" = '可转债'"]
+
+[guytm]
+title = '偏股型转债ytm'
+column = '纯债到期收益率(%)'
+ctype = 'median'
+[guytm.conditions]
+main = ["\"债券类型\" = '可转债'", '(("转换价值" - "纯债价值") / "纯债价值") > 0.2']
+ratio_total = ["\"债券类型\" = '可转债'"]
+
+[pingguzhi]
+title = '平衡型转债转股溢价率'
+column = '纯债到期收益率(%)'
+ctype = 'median'
+[pingguzhi.conditions]
+main = ["\"债券类型\" = '可转债'", '(("转换价值" - "纯债价值") / "纯债价值") >= -0.2', '(("转换价值" - "纯债价值") / "纯债价值") <= 0.2']
+ratio_total = ["\"债券类型\" = '可转债'"]
+
+[pingjiage]
+title = '平衡型转债价格'
+column = '收盘价'
+ctype = 'median'
+[pingjiage.conditions]
+main = ["\"债券类型\" = '可转债'", '(("转换价值" - "纯债价值") / "纯债价值") >= -0.2', '(("转换价值" - "纯债价值") / "纯债价值") <= 0.2']
+ratio_total = ["\"债券类型\" = '可转债'"]
+
+[pingjiaguzhi]
+title = '平价80元以下的估值'
+column = '转股溢价率(%)'
+ctype = 'median'
+[pingjiaguzhi.conditions]
+main = ["\"债券类型\" = '可转债'", '"转换价值" <= 80']
+ratio_total = ["\"债券类型\" = '可转债'"]
+
+[pingshuliang]
+title = '平衡型转债数量'
+column = '转股溢价率(%)'
+ctype = 'ratio'
+[pingshuliang.conditions]
+main = ["\"债券类型\" = '可转债'", '(("转换价值" - "纯债价值") / "纯债价值") >= -0.2', '(("转换价值" - "纯债价值") / "纯债价值") <= 0.2']
+ratio_total = ["\"债券类型\" = '可转债'"]
+
+[pingytm]
+title = '平衡型转债ytm'
+column = '纯债到期收益率(%)'
+ctype = 'median'
+[pingytm.conditions]
+main = ["\"债券类型\" = '可转债'", '(("转换价值" - "纯债价值") / "纯债价值") >= -0.2', '(("转换价值" - "纯债价值") / "纯债价值") <= 0.2']
+ratio_total = ["\"债券类型\" = '可转债'"]
+
+[quanguzhiavg]
+title = '全部转债转股溢价率平均数'
+column = '转股溢价率(%)'
+ctype = 'avg'
+[quanguzhiavg.conditions]
+main = ["\"债券类型\" = '可转债'"]
+ratio_total = ["\"债券类型\" = '可转债'"]
+
+[quanguzhimedian]
+title = '全部转债转股溢价率中位数'
+column = '转股溢价率(%)'
+ctype = 'median'
+[quanguzhimedian.conditions]
+main = ["\"债券类型\" = '可转债'"]
+ratio_total = ["\"债券类型\" = '可转债'"]
+
+[quanjiage]
+title = '全部转债价格中位数'
+column = '收盘价'
+ctype = 'median'
+[quanjiage.conditions]
+main = ["\"债券类型\" = '可转债'"]
+ratio_total = ["\"债券类型\" = '可转债'"]
+
+[quanjiageavg]
+title = '全部转债价格平均数'
+column = '收盘价'
+ctype = 'avg'
+[quanjiageavg.conditions]
+main = ["\"债券类型\" = '可转债'"]
+ratio_total = ["\"债券类型\" = '可转债'"]
+
+[quanshichangzhuanhuanjiazhi]
+title = '全市场转股价值'
+column = '转换价值'
+ctype = 'median'
+[quanshichangzhuanhuanjiazhi.conditions]
+main = ["\"债券类型\" = '可转债'"]
+ratio_total = ["\"债券类型\" = '可转债'"]
+
+[zhaiguzhi]
+title = '偏债型转债转股溢价率'
+column = '转股溢价率(%)'
+ctype = 'median'
+[zhaiguzhi.conditions]
+main = ["\"债券类型\" = '可转债'", '(("转换价值" - "纯债价值") / "纯债价值") < -0.2']
+ratio_total = ["\"债券类型\" = '可转债'"]
+
+[zhaijiage]
+title = '偏债型转债价格'
+column = '收盘价'
+ctype = 'median'
+[zhaijiage.conditions]
+main = ["\"债券类型\" = '可转债'", '(("转换价值" - "纯债价值") / "纯债价值") < 0.2']
+ratio_total = ["\"债券类型\" = '可转债'"]
+
+[zhaishuliang]
+title = '偏债型转债数量'
+column = '转股溢价率(%)'
+ctype = 'ratio'
+[zhaishuliang.conditions]
+main = ["\"债券类型\" = '可转债'", '(("转换价值" - "纯债价值") / "纯债价值") < -0.2']
+ratio_total = ["\"债券类型\" = '可转债'"]
+
+[zhaiytm]
+title = '偏债型转债ytm'
+column = '纯债到期收益率(%)'
+ctype = 'median'
+[zhaiytm.conditions]
+main = ["\"债券类型\" = '可转债'", '(("转换价值" - "纯债价值") / "纯债价值") < -0.2']
+ratio_total = ["\"债券类型\" = '可转债'"]
+
+[shoupanjia_100]
+title = '收盘价<100数量'
+column = '转股溢价率(%)'
+ctype = 'ratio'
+[shoupanjia_100.conditions]
+main = ["\"债券类型\" = '可转债'", '"收盘价" < 100']
+ratio_total = ["\"债券类型\" = '可转债'"]
+
+[shoupanjia_median_100]
+title = '收盘价<100转股价值中位数'
+column = '转换价值'
+ctype = 'median'
+[shoupanjia_median_100.conditions]
+main = ["\"债券类型\" = '可转债'", '"收盘价" < 100']
+ratio_total = ["\"债券类型\" = '可转债'"]
+
+[shoupanjia_avg_100]
+title = '收盘价<100转股价值平均数'
+column = '转换价值'
+ctype = 'avg'
+[shoupanjia_avg_100.conditions]
+main = ["\"债券类型\" = '可转债'", '"收盘价" < 100']
+ratio_total = ["\"债券类型\" = '可转债'"]
+
+
