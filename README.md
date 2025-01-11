@@ -15,10 +15,6 @@
     ```bash
     pip install -r requirements.txt
     ```
-4. 运行程序：
-    ```bash
-    python main.py
-    ```
 
 ## 数据
 
