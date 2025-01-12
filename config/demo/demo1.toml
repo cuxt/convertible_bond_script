@@ -200,19 +200,19 @@ main = ["\"债券类型\" = '可转债'", '"收盘价" < 100']
 ratio_total = ["\"债券类型\" = '可转债'"]
 
 [shoupanjia_median_100]
-title = '收盘价<100转股价值中位数'
+title = '转股价值中位数'
 column = '转换价值'
 ctype = 'median'
 [shoupanjia_median_100.conditions]
-main = ["\"债券类型\" = '可转债'", '"收盘价" < 100']
+main = ["\"债券类型\" = '可转债'"]
 ratio_total = ["\"债券类型\" = '可转债'"]
 
 [shoupanjia_avg_100]
-title = '收盘价<100转股价值平均数'
+title = '转股价值平均数'
 column = '转换价值'
 ctype = 'avg'
 [shoupanjia_avg_100.conditions]
-main = ["\"债券类型\" = '可转债'", '"收盘价" < 100']
+main = ["\"债券类型\" = '可转债'"]
 ratio_total = ["\"债券类型\" = '可转债'"]
 
 [shoupanjiaxiaoyuchunzaishouyi]

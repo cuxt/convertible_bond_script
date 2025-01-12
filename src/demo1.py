@@ -12,20 +12,18 @@ from utils.utils import is_trade_day
 
 root_path = Path(__file__).resolve().parent.parent
 
-mode = 'local'  # local | remote
-
 env = Env()
 env.read_env()
 
 # 设置日期：上周五-本周五
-# today = datetime.datetime.now()
-today = datetime.date(2025, 1, 4)
+today = datetime.datetime.now()
+# today = datetime.date(2025, 1, 4)
 days_ahead = 4 - today.weekday()
 
-current_friday_date = today + timedelta(days=days_ahead)
-last_friday_date = current_friday_date - timedelta(days=7)
-# current_friday_date = datetime.date(2025, 1, 3)
-# last_friday_date = datetime.date(2018, 1, 1)
+# current_friday_date = today + timedelta(days=days_ahead)
+# last_friday_date = current_friday_date - timedelta(days=7)
+current_friday_date = datetime.date(2025, 1, 10)
+last_friday_date = datetime.date(2025, 1, 10)
 
 start_date = last_friday_date.strftime("%Y%m%d")
 end_date = current_friday_date.strftime("%Y%m%d")
@@ -45,8 +43,7 @@ def main():
     with open(config_path, 'r', encoding='utf-8') as file:
         config = toml.load(file)
 
-    if mode == 'remote':
-        fetch_data()
+    sync_data()
 
     data_list = []
     for item in config:
@@ -61,16 +58,31 @@ def main():
     df.to_csv(output_path, index=False, header=False)
 
 
-def fetch_data():
+def sync_data():
+    sync_date_str = setting['sync_date']
+    sync_date = datetime.datetime.strptime(sync_date_str, '%Y%m%d')
+    sync_date = sync_date.date() + timedelta(days=1)
+
+    if sync_date > current_friday_date:
+        return
+
+    fetch_data(sync_date, current_friday_date)
+
+    setting['sync_date'] = end_date
+    with open(setting_path, 'w', encoding='utf-8') as file:
+        toml.dump(setting, file)
+
+
+def fetch_data(start_date, end_date):
     print('获取数据。。。')
 
     user = env.json('THS_USER')
 
     iFind = IFinD(user['username'], user['password'])
 
-    total_days = (current_friday_date - last_friday_date).days + 1
+    total_days = (end_date - start_date).days + 1
     for current_date in range(total_days):
-        current_date = last_friday_date + timedelta(days=current_date)
+        current_date = start_date + timedelta(days=current_date)
         current_date_str = current_date.strftime('%Y%m%d')
 
         if not is_trade_day(current_date):
