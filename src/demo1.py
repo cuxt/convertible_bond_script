@@ -22,8 +22,8 @@ days_ahead = 4 - today.weekday()
 
 # current_friday_date = today + timedelta(days=days_ahead)
 # last_friday_date = current_friday_date - timedelta(days=7)
-current_friday_date = datetime.date(2025, 1, 10)
-last_friday_date = datetime.date(2025, 1, 10)
+current_friday_date = datetime.date(2025, 1, 13)
+last_friday_date = datetime.date(2025, 1, 13)
 
 start_date = last_friday_date.strftime("%Y%m%d")
 end_date = current_friday_date.strftime("%Y%m%d")
@@ -118,8 +118,15 @@ def fetch_data(start_date, end_date):
             ]
         }
         basic_data = iFind.get_basic_data(payload)
-        # print(basic_data)
         save_to_csv(data_pool, basic_data, current_date_str)
+
+        file_path = root_path / 'data' / f'{current_date_str}.csv'
+        # 隐含波动率
+        df = pd.read_csv(file_path)
+        codes = df['代码'].tolist()
+        implied_volatility = iFind.get_implied_volatility(codes, current_date_str)
+        df['隐含波动率'] = implied_volatility
+        df.to_csv(file_path, index=False, encoding='utf-8')
 
 
 def save_to_csv(data, basic_data, yesterday):

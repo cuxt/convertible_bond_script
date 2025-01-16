@@ -136,3 +136,48 @@ class IFinD(object):
         else:
             print(f"可转债: {response.json()}")
             return None
+
+    def get_implied_volatility(self, codes, trade_date):
+        # 隐含波动率
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36',
+            'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/json',
+            'Origin': 'http://ft.10jqka.com.cn',
+            'Referer': 'http://ft.10jqka.com.cn/gwstatic/static/data_browser/data-browser/index.html?type=bond',
+            'Accept-Language': 'zh-CN,zh;q=0.9,zh-TW;q=0.8,en;q=0.7',
+        }
+
+        payload = {
+            'calculate': [],
+            'requests': [
+                {
+                    'item': '17180',
+                    'indexKey': 'p0',
+                    'params': [
+                        {
+                            'param_name': 'TD',
+                            'value': trade_date,
+                            'system': False,
+                        },
+                        {
+                            'param_name': 'C',
+                            'value': '1',
+                            'system': True,
+                        },
+                    ],
+                },
+            ],
+            'codes': codes
+        }
+
+        response = requests.post(
+            'http://ft.10jqka.com.cn/standardgwapi/data_browser_web/index_query/index/calculate',
+            cookies=self.cookie,
+            headers=headers,
+            json=payload,
+        )
+
+        data = response.json()
+        data_list = [item for sublist in data['data'] for item in sublist]
+        return data_list

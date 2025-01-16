@@ -40,3 +40,4 @@ ignore_errors = true
 "债券类型" = "string"
 "债券最新评级" = "string"
 "债券余额" = "float"
+"隐含波动率" = "float"

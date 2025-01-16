@@ -1,4 +1,4 @@
-sync_date = "20250110"
+sync_date = "20250113"
 
 [column_name]
 ratio = [ "日期", "筛选后数量", "转债总数",]
