@@ -41,7 +41,6 @@ class IFinD(object):
         header = {"ContentType": "application/json", "refresh_token": self.refresh_token}
         response = requests.post(url=url, headers=header)
 
-        print(response)
         access_token = json.loads(response.content)['data']['access_token']
 
         return access_token
@@ -122,7 +121,11 @@ class IFinD(object):
 
         if response.status_code == 200:
             data = response.json()
-            return data["tables"][0]["table"]
+            try:
+                return data["tables"][0]["table"]
+            except:
+                print(data['errmsg'])
+                exit(-1)
         else:
             print(f"请求出错: {response.json()}")
             return None

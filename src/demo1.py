@@ -22,8 +22,8 @@ days_ahead = 4 - today.weekday()
 
 # current_friday_date = today + timedelta(days=days_ahead)
 # last_friday_date = current_friday_date - timedelta(days=7)
-current_friday_date = datetime.date(2025, 1, 13)
-last_friday_date = datetime.date(2025, 1, 13)
+current_friday_date = datetime.date(2025, 1, 17)
+last_friday_date = datetime.date(2025, 1, 10)
 
 start_date = last_friday_date.strftime("%Y%m%d")
 end_date = current_friday_date.strftime("%Y%m%d")
