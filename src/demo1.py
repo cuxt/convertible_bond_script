@@ -16,14 +16,14 @@ env = Env()
 env.read_env()
 
 # 设置日期：上周五-本周五
-today = datetime.datetime.now()
+today = datetime.datetime.now().date()
 # today = datetime.date(2025, 1, 4)
 days_ahead = 4 - today.weekday()
 
-# current_friday_date = today + timedelta(days=days_ahead)
-# last_friday_date = current_friday_date - timedelta(days=7)
-current_friday_date = datetime.date(2025, 1, 17)
-last_friday_date = datetime.date(2025, 1, 10)
+current_friday_date = today + timedelta(days=days_ahead)
+last_friday_date = current_friday_date - timedelta(days=7)
+# current_friday_date = datetime.date(2025, 1, 17)
+# last_friday_date = datetime.date(2025, 1, 10)
 
 start_date = last_friday_date.strftime("%Y%m%d")
 end_date = current_friday_date.strftime("%Y%m%d")
