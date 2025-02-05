@@ -38,6 +38,10 @@ bond_calc = BondCalc()
 def main():
     # 配置文件地址
     config_path = root_path / 'config' / 'demo' / 'demo1.toml'
+
+    if current_friday_date < last_friday_date:
+        raise Exception('日期设置错误')
+
     # 输出地址
     output_path = root_path / 'output' / f'{start_date}-{end_date}.csv'
     with open(config_path, 'r', encoding='utf-8') as file:
