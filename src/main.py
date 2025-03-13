@@ -6,20 +6,16 @@ from iFinD import IFinD
 
 app = FastAPI(
     title="vFinD backend",
-    description="vFinD 后端服务",
+    description="vFinD API",
     version="1.0.0"
 )
 
 # 配置 CORS
 app.add_middleware(
     CORSMiddleware,
-    # 允许的源列表
-    allow_origins=["*"],  # 允许所有源
-    # 允许的HTTP方法
-    allow_methods=["*"],  # 允许所有方法
-    # 允许的HTTP头
-    allow_headers=["*"],  # 允许所有头
-    # 是否允许发送cookie
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
     allow_credentials=True
 )
 
@@ -27,6 +23,11 @@ app.add_middleware(
 @app.get("/")
 async def root():
     return {"message": "欢迎使用 vFinD"}
+
+
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy"}
 
 
 @app.post("/login")
