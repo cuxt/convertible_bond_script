@@ -112,6 +112,26 @@ class BondCalc(object):
             print('\n', f'match_func({model}): ', e)
             print(data)
 
+    def custom(self, filename, conditions):
+        file_path = self.root_path / 'data' / f'{filename}.csv'
+        query = f"""
+            {conditions['main'][0]} FROM read_csv(
+                '{file_path}',
+                delim='{self.config['type']['delim']}',
+                quote='{self.config['type']['quote']}',
+                escape='{self.config['type']['escape']}',
+                header={str(self.config['type']['header']).lower()},
+                ignore_errors={str(self.config['type']['ignore_errors']).lower()},
+                columns={self.columns_str}
+            )
+        """
+        with BondDao() as dao:
+            data = dao.query(query)
+
+        if not isinstance(data, list):
+            return filename, None
+        return filename, data[0][0]
+
 
 def main():
     conditions = {

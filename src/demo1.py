@@ -179,7 +179,10 @@ def calc_func(config):
 
     data_list = []
     insert_with_filler(data_list, title)
-    insert_with_filler(data_list, *column_name[ctype])
+    column_name = column_name.get(ctype, None)
+    if column_name is None:
+        column_name = config['column_name']
+    insert_with_filler(data_list, *column_name)
 
     print(title)
     total_days = (current_friday_date - last_friday_date).days + 1
@@ -195,6 +198,8 @@ def calc_func(config):
         # 计算数据
         if ctype == "ratio":
             data_tuple = bond_calc.ratio(current_date_str, conditions)
+        elif ctype == "custom":
+            data_tuple = bond_calc.custom(current_date_str, conditions)
         else:
             data_tuple = bond_calc.math_func(current_date_str, conditions, column, ctype)
 
