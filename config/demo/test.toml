@@ -1,0 +1,7 @@
+[customtest]
+title = '自定义测试'
+column = 'test'
+ctype = 'custom'
+column_name = ['日期', '余额加权的隐含波动率']
+[customtest.conditions]
+main = ['SELECT SUM("债券余额" * "隐含波动率") / SUM("债券余额")']

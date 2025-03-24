@@ -4,12 +4,14 @@ quote = "\""
 escape = "\""
 header = true
 ignore_errors = true
+null_padding = true
+strict_mode = false
 
 [columns]
 "代码" = "string"
 "名称" = "string"
 "交易日期" = "string"
-"前收盘价"= "float"
+"前收盘价" = "float"
 "开盘价" = "float"
 "最高价" = "float"
 "最低价" = "float"

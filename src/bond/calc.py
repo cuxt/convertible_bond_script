@@ -12,18 +12,18 @@ class BondCalc(object):
         self.columns_str = self.format_column()
 
     def load_config(self):
-        config_path = self.root_path / 'config' / 'csv.toml'
-        with open(config_path, 'r', encoding='utf-8') as f:
+        config_path = self.root_path / "config" / "csv.toml"
+        with open(config_path, "r", encoding="utf-8") as f:
             config = toml.load(f)
         return config
 
     def format_column(self):
-        columns_dict = {f'"{k}"': v for k, v in self.config['columns'].items()}
+        columns_dict = {f'"{k}"': v for k, v in self.config["columns"].items()}
         columns_str = str(columns_dict).replace("'", "")
         return columns_str
 
     def ratio(self, filename, conditions):
-        file_path = self.root_path / 'data' / f'{filename}.csv'
+        file_path = self.root_path / "data" / f"{filename}.csv"
 
         base_query = f"""
             SELECT "代码" FROM read_csv(
@@ -37,8 +37,8 @@ class BondCalc(object):
             )
         """
 
-        if conditions and 'ratio_total' in conditions and conditions['ratio_total']:
-            query = base_query + " WHERE " + " AND ".join(conditions['ratio_total'])
+        if conditions and "ratio_total" in conditions and conditions["ratio_total"]:
+            query = base_query + " WHERE " + " AND ".join(conditions["ratio_total"])
         else:
             query = base_query
 
@@ -48,8 +48,8 @@ class BondCalc(object):
 
         if not isinstance(code, list):
             return filename, None, None
-        if conditions and 'main' in conditions and conditions['main']:
-            query = base_query + " WHERE " + " AND ".join(conditions['main'])
+        if conditions and "main" in conditions and conditions["main"]:
+            query = base_query + " WHERE " + " AND ".join(conditions["main"])
         else:
             query = base_query
         total = len(code)
@@ -58,8 +58,8 @@ class BondCalc(object):
         remain = len(data_remain)
         return filename, remain, total
 
-    def math_func(self, filename, conditions, column, model='median'):
-        file_path = self.root_path / 'data' / f'{filename}.csv'
+    def math_func(self, filename, conditions, column, model="median"):
+        file_path = self.root_path / "data" / f"{filename}.csv"
 
         base_query = f"""
                     SELECT "{column}" FROM read_csv(
@@ -73,8 +73,8 @@ class BondCalc(object):
                     )
                 """
 
-        if conditions and 'main' in conditions and conditions['main']:
-            query = base_query + " WHERE " + " AND ".join(conditions['main'])
+        if conditions and "main" in conditions and conditions["main"]:
+            query = base_query + " WHERE " + " AND ".join(conditions["main"])
         else:
             query = base_query
 
@@ -94,26 +94,26 @@ class BondCalc(object):
             return filename, None
 
         try:
-            if model == 'median':
+            if model == "median":
                 return filename, np.median(filtered_data)
-            elif model == 'avg':
+            elif model == "avg":
                 return filename, np.mean(filtered_data)
-            elif model == 'max':
+            elif model == "max":
                 return filename, max(filtered_data)
-            elif model == 'min':
+            elif model == "min":
                 return filename, min(filtered_data)
-            elif model == 'std_0':
+            elif model == "std_0":
                 # 有偏样本标准差
                 return filename, np.std(filtered_data, ddof=0)
-            elif model == 'std_1':
+            elif model == "std_1":
                 # 无偏样本标准差
                 return filename, np.std(filtered_data, ddof=1)
         except Exception as e:
-            print('\n', f'match_func({model}): ', e)
+            print("\n", f"match_func({model}): ", e)
             print(data)
 
     def custom(self, filename, conditions):
-        file_path = self.root_path / 'data' / f'{filename}.csv'
+        file_path = self.root_path / "data" / f"{filename}.csv"
         query = f"""
             {conditions['main'][0]} FROM read_csv(
                 '{file_path}',
@@ -130,23 +130,26 @@ class BondCalc(object):
 
         if not isinstance(data, list):
             return filename, None
-        return filename, data[0][0]
+        try:
+            value = data[0][0]
+            return filename, value
+        except IndexError:
+            print("Index out of range. Please check the list and index.")
+            return filename, None
 
 
 def main():
     conditions = {
         "main": [
-            '"债券类型" = \'可转债\'',
+            "\"债券类型\" = '可转债'",
             '"转换价值" <= 80',
         ],
-        "ratio_total": [
-            '"债券类型" = \'可转债\''
-        ]
+        "ratio_total": ["\"债券类型\" = '可转债'"],
     }
     bond_calc = BondCalc()
-    data = bond_calc.math_func('20180102', conditions, '转股溢价率(%)')
+    data = bond_calc.math_func("20180102", conditions, "转股溢价率(%)")
     print(data)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
