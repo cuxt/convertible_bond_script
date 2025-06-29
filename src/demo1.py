@@ -1,12 +1,7 @@
 import csv
 import datetime
-import sys
-import os
 from datetime import timedelta
 from pathlib import Path
-
-project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, project_root)
 
 import toml
 import pandas as pd
@@ -28,8 +23,8 @@ days_ahead = 4 - today.weekday()
 
 # current_friday_date = today + timedelta(days=days_ahead)
 # last_friday_date = current_friday_date - timedelta(days=7)
-current_friday_date = datetime.date(2019, 10, 10)
-last_friday_date = datetime.date(2019, 10, 1)
+current_friday_date = datetime.date(2025, 1, 27)
+last_friday_date = datetime.date(2024, 9, 13)
 
 start_date = last_friday_date.strftime("%Y%m%d")
 end_date = current_friday_date.strftime("%Y%m%d")

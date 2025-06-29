@@ -130,6 +130,7 @@ class BondCalc(object):
 
         if not isinstance(data, list):
             return filename, None
+        print(data)
         try:
             value = data[0][0]
             return filename, value
