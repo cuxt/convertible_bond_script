@@ -227,14 +227,30 @@ def calc_func(config):
     column = config["column"]
     ctype = config["ctype"]
     conditions = config["conditions"]
+
+    # 获取拟合配置（如果存在）
+    fit_config = config.get("fit_config", None)
+
     column_name = setting["column_name"]
 
     data_list = []
     insert_with_filler(data_list, title)
-    column_name = column_name.get(ctype, None)
-    if column_name is None:
-        column_name = config["column_name"]
-    insert_with_filler(data_list, *column_name)
+
+    # 根据是否有拟合配置选择列名
+    if fit_config and fit_config.get("enable_fitting", False):
+        # 使用拟合相关的列名
+        fit_ctype = f"fit_{ctype}"
+        column_name_to_use = column_name.get(fit_ctype, None)
+        if column_name_to_use is None:
+            # 如果没有对应的拟合列名配置，使用自定义配置或默认配置
+            column_name_to_use = config.get("column_name", ["日期", "拟合值", "拟合质量(R²)"])
+    else:
+        # 使用普通列名
+        column_name_to_use = column_name.get(ctype, None)
+        if column_name_to_use is None:
+            column_name_to_use = config.get("column_name", ["日期", "值"])
+
+    insert_with_filler(data_list, *column_name_to_use)
 
     print(title)
     total_days = (current_friday_date - last_friday_date).days + 1
@@ -253,9 +269,20 @@ def calc_func(config):
         elif ctype == "custom":
             data_tuple = bond_calc.custom(current_date_str, conditions)
         else:
-            data_tuple = bond_calc.math_func(
-                current_date_str, conditions, column, ctype
-            )
+            # 如果有拟合配置，使用带拟合功能的方法
+            if fit_config and fit_config.get("enable_fitting", False):
+                data_tuple = bond_calc.math_func_with_fitting(
+                    current_date_str, conditions, column, ctype, fit_config
+                )
+                # math_func_with_fitting 返回 (filename, value, r_squared) 三元组
+                # 如果没有拟合发生，r_squared 为 None
+            else:
+                data_tuple = bond_calc.math_func(
+                    current_date_str, conditions, column, ctype
+                )
+                # 为了保持一致性，将普通结果转换为三元组格式
+                if len(data_tuple) == 2:
+                    data_tuple = (data_tuple[0], data_tuple[1], None)
 
         insert_with_filler(data_list, *data_tuple)
 
