@@ -8,3 +8,5 @@ environs~=14.2.0
 requests~=2.32.4
 pycryptodomex~=3.23.0
 chinese_calendar~=1.10.0
+pymc~=5.14.0
+arviz~=0.21.0
