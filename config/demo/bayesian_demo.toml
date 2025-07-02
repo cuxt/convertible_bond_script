@@ -1,0 +1,120 @@
+# 贝叶斯拟合方法演示配置文件
+# 展示不同的贝叶斯拟合方法和配置选项
+
+[bayesian_linear]
+title = '贝叶斯线性拟合示例'
+column = '转股溢价率(%)'
+ctype = 'median'
+[bayesian_linear.conditions]
+main = ["\"债券类型\" = '可转债'", '"转换价值" > 90', '"转换价值" <= 120']
+ratio_total = ["\"债券类型\" = '可转债'"]
+[bayesian_linear.fit_config]
+enable_fitting = true
+min_data_threshold = 50
+fit_type = "bayesian"
+historical_files_count = 15
+[bayesian_linear.fit_config.bayesian] # 贝叶斯拟合参数
+method = "linear" # 贝叶斯方法: linear, polynomial, auto
+prior_type = "normal" # 先验分布: normal, laplace, horseshoe
+n_samples = 2000 # MCMC采样数量
+n_chains = 2 # MCMC链数量
+credible_interval = 0.95 # 置信区间
+[bayesian_linear.fit_config.quality]
+min_r_squared = 0.5
+fallback_on_poor_fit = true
+include_quality_info = true
+[bayesian_linear.fit_config.fit_conditions]
+main = ["\"债券类型\" = '可转债'", '"转换价值" > 70', '"转换价值" <= 140']
+[bayesian_linear.fit_config.predict_conditions]
+predict_column = "转换价值"
+predict_value = 100
+target_column = "转股溢价率(%)"
+
+[bayesian_polynomial]
+title = '贝叶斯多项式拟合示例'
+column = '转股溢价率(%)'
+ctype = 'median'
+[bayesian_polynomial.conditions]
+main = ["\"债券类型\" = '可转债'", '"转换价值" > 90', '"转换价值" <= 120']
+ratio_total = ["\"债券类型\" = '可转债'"]
+[bayesian_polynomial.fit_config]
+enable_fitting = true
+min_data_threshold = 50
+fit_type = "bayesian"
+historical_files_count = 20
+[bayesian_polynomial.fit_config.bayesian]
+method = "polynomial"
+prior_type = "normal"
+n_samples = 3000
+n_chains = 2
+max_degree = 4 # 最大多项式次数
+credible_interval = 0.95
+[bayesian_polynomial.fit_config.quality]
+min_r_squared = 0.6
+fallback_on_poor_fit = true
+include_quality_info = true
+[bayesian_polynomial.fit_config.fit_conditions]
+main = ["\"债券类型\" = '可转债'", '"转换价值" > 70', '"转换价值" <= 150']
+[bayesian_polynomial.fit_config.predict_conditions]
+predict_column = "转换价值"
+predict_value = 105
+target_column = "转股溢价率(%)"
+
+[bayesian_auto]
+title = '贝叶斯自动模型选择示例'
+column = '转股溢价率(%)'
+ctype = 'median'
+[bayesian_auto.conditions]
+main = ["\"债券类型\" = '可转债'", '"转换价值" > 90', '"转换价值" <= 120']
+ratio_total = ["\"债券类型\" = '可转债'"]
+[bayesian_auto.fit_config]
+enable_fitting = true
+min_data_threshold = 30
+fit_type = "bayesian"
+historical_files_count = 25
+[bayesian_auto.fit_config.bayesian]
+method = "auto" # 自动选择最佳模型
+prior_type = "horseshoe" # 使用horseshoe先验进行特征选择
+n_samples = 2500
+n_chains = 2
+max_degree = 3
+credible_interval = 0.95
+[bayesian_auto.fit_config.quality]
+min_r_squared = 0.4
+fallback_on_poor_fit = true
+include_quality_info = true
+[bayesian_auto.fit_config.fit_conditions]
+main = ["\"债券类型\" = '可转债'", '"转换价值" > 80', '"转换价值" <= 130']
+[bayesian_auto.fit_config.predict_conditions]
+predict_column = "转换价值"
+predict_value = 110
+target_column = "转股溢价率(%)"
+
+[laplace_prior]
+title = '拉普拉斯先验示例（更鲁棒）'
+column = '转股溢价率(%)'
+ctype = 'median'
+[laplace_prior.conditions]
+main = ["\"债券类型\" = '可转债'", '"转换价值" > 85', '"转换价值" <= 115']
+ratio_total = ["\"债券类型\" = '可转债'"]
+[laplace_prior.fit_config]
+enable_fitting = true
+min_data_threshold = 40
+fit_type = "bayesian"
+historical_files_count = 18
+[laplace_prior.fit_config.bayesian]
+method = "linear"
+prior_type = "laplace" # 拉普拉斯先验对异常值更鲁棒
+n_samples = 2000
+n_chains = 2
+credible_interval = 0.90
+[laplace_prior.fit_config.quality]
+min_r_squared = 0.3
+fallback_on_poor_fit = true
+include_quality_info = true
+[laplace_prior.fit_config.fit_conditions]
+main = ["\"债券类型\" = '可转债'", '"转换价值" > 60', '"转换价值" <= 160']
+[laplace_prior.fit_config.predict_conditions]
+predict_column = "转换价值"
+predict_value = 100
+target_column = "转股溢价率(%)"

@@ -2,10 +2,19 @@ from pathlib import Path
 
 import numpy as np
 import toml
+import warnings
 from scipy import optimize
 from scipy.stats import linregress
 from sklearn.metrics import r2_score
 from src.bond.dao import BondDao
+
+# 导入贝叶斯拟合器（可选依赖）
+try:
+    from src.bond.bayesian_fitter import BayesianFitter
+    BAYESIAN_AVAILABLE = True
+except ImportError:
+    BAYESIAN_AVAILABLE = False
+    warnings.warn("Bayesian fitting not available. Install pymc and arviz for Bayesian functionality.")
 
 
 class BondCalc(object):
@@ -232,7 +241,12 @@ class BondCalc(object):
             if fit_result is None:
                 return None
 
-            fitted_params, r_squared, fit_type = fit_result
+            # 处理贝叶斯拟合结果（可能有额外的贝叶斯结果对象）
+            if len(fit_result) == 4:
+                fitted_params, r_squared, fit_type, bayesian_result = fit_result
+            else:
+                fitted_params, r_squared, fit_type = fit_result
+                bayesian_result = None
 
             # 检查拟合质量
             min_r_squared = fit_config.get("quality", {}).get("min_r_squared", 0.6)
@@ -248,13 +262,26 @@ class BondCalc(object):
             predict_value = predict_conditions.get("predict_value", 100)
 
             # 预测指定X值对应的Y值
-            predicted_value = self._predict_value(predict_value, fitted_params, fit_type)
+            predicted_value = self._predict_value(predict_value, fitted_params, fit_type, bayesian_result)
 
             # 输出拟合信息
             if fit_config.get("quality", {}).get("include_quality_info", True):
                 predict_column = predict_conditions.get("predict_column", "转换价值")
                 print(f"拟合类型: {fit_type}, R²: {r_squared:.3f}")
                 print(f"预测当{predict_column}={predict_value}时，{column}={predicted_value:.3f}")
+                
+                # 对于贝叶斯方法，输出不确定性信息
+                if bayesian_result is not None and BAYESIAN_AVAILABLE:
+                    try:
+                        fitter = BayesianFitter()
+                        pred_result = fitter.predict([predict_value], bayesian_result)
+                        uncertainty = pred_result['std'][0]
+                        lower_bound = pred_result['lower_bound'][0]
+                        upper_bound = pred_result['upper_bound'][0]
+                        print(f"预测不确定性: ±{uncertainty:.3f}")
+                        print(f"置信区间: [{lower_bound:.3f}, {upper_bound:.3f}]")
+                    except Exception as e:
+                        print(f"无法计算预测不确定性: {e}")
 
             # 返回预测值和R²值
             return predicted_value, r_squared
@@ -398,6 +425,8 @@ class BondCalc(object):
                 return self._logarithmic_fit(x_data, y_data)
             elif fit_type == "power":
                 return self._power_fit(x_data, y_data)
+            elif fit_type.startswith("bayesian"):
+                return self._bayesian_fit(x_data, y_data, fit_config)
             else:
                 print(f"不支持的拟合类型: {fit_type}")
                 return None
@@ -457,12 +486,121 @@ class BondCalc(object):
         r_squared = r2_score(y_data, y_pred)
         return popt, r_squared, "power"
 
-    def _predict_value(self, x, params, fit_type):
+    def _bayesian_fit(self, x_data, y_data, fit_config):
+        """
+        贝叶斯拟合方法
+        """
+        if not BAYESIAN_AVAILABLE:
+            print("贝叶斯拟合不可用，请安装 pymc 和 arviz")
+            return None
+        
+        try:
+            # 从配置中获取贝叶斯参数
+            bayesian_config = fit_config.get("bayesian", {})
+            method = bayesian_config.get("method", "linear")
+            prior_type = bayesian_config.get("prior_type", "normal")
+            n_samples = bayesian_config.get("n_samples", 2000)
+            n_chains = bayesian_config.get("n_chains", 2)
+            max_degree = bayesian_config.get("max_degree", 3)
+            credible_interval = bayesian_config.get("credible_interval", 0.95)
+            
+            # 创建贝叶斯拟合器
+            fitter = BayesianFitter(
+                n_samples=n_samples,
+                n_chains=n_chains,
+                credible_interval=credible_interval
+            )
+            
+            if method == "linear":
+                result = fitter.fit_linear(x_data, y_data, prior_type=prior_type)
+                # 转换为传统格式以兼容现有代码
+                slope_mean = result['parameters']['slope']['mean']
+                intercept_mean = result['parameters']['intercept']['mean']
+                
+                # 计算等效R²（使用后验预测）
+                pred_result = fitter.predict(x_data, result)
+                y_pred = pred_result['mean']
+                r_squared = r2_score(y_data, y_pred)
+                
+                return [slope_mean, intercept_mean], r_squared, "bayesian_linear", result
+                
+            elif method == "polynomial":
+                result = fitter.fit_polynomial(x_data, y_data, max_degree=max_degree, prior_type=prior_type)
+                # 转换为传统格式
+                coeffs_mean = result['parameters']['coefficients']['mean']
+                
+                # 计算等效R²
+                pred_result = fitter.predict(x_data, result)
+                y_pred = pred_result['mean']
+                r_squared = r2_score(y_data, y_pred)
+                
+                best_degree = result.get('best_degree', max_degree)
+                return coeffs_mean, r_squared, f"bayesian_polynomial_{best_degree}", result
+                
+            elif method == "auto":
+                # 自动模型选择
+                models = []
+                
+                # 尝试线性模型
+                try:
+                    linear_result = fitter.fit_linear(x_data, y_data, prior_type=prior_type)
+                    models.append(linear_result)
+                except Exception as e:
+                    print(f"线性模型拟合失败: {e}")
+                
+                # 尝试多项式模型
+                try:
+                    poly_result = fitter.fit_polynomial(x_data, y_data, max_degree=max_degree, prior_type=prior_type)
+                    models.append(poly_result)
+                except Exception as e:
+                    print(f"多项式模型拟合失败: {e}")
+                
+                if not models:
+                    return None
+                
+                # 选择最佳模型
+                comparison = fitter.model_comparison(models)
+                best_model = models[comparison['best_model']['model_index']]
+                
+                # 计算等效R²
+                pred_result = fitter.predict(x_data, best_model)
+                y_pred = pred_result['mean']
+                r_squared = r2_score(y_data, y_pred)
+                
+                if best_model['model_type'] == 'bayesian_linear':
+                    slope_mean = best_model['parameters']['slope']['mean']
+                    intercept_mean = best_model['parameters']['intercept']['mean']
+                    return [slope_mean, intercept_mean], r_squared, "bayesian_auto_linear", best_model
+                else:
+                    coeffs_mean = best_model['parameters']['coefficients']['mean']
+                    degree = best_model.get('degree', best_model.get('best_degree', 2))
+                    return coeffs_mean, r_squared, f"bayesian_auto_polynomial_{degree}", best_model
+                    
+            else:
+                print(f"不支持的贝叶斯方法: {method}")
+                return None
+                
+        except Exception as e:
+            print(f"贝叶斯拟合失败: {e}")
+            return None
+
+    def _predict_value(self, x, params, fit_type, bayesian_result=None):
         """根据拟合参数预测值"""
-        if fit_type == "linear":
-            slope, intercept = params
+        if fit_type.startswith("bayesian") and bayesian_result is not None:
+            # 使用贝叶斯预测
+            if BAYESIAN_AVAILABLE:
+                try:
+                    fitter = BayesianFitter()
+                    pred_result = fitter.predict([x], bayesian_result)
+                    return pred_result['mean'][0]
+                except Exception as e:
+                    print(f"贝叶斯预测失败，回退到传统方法: {e}")
+                    # 回退到传统预测方法
+        
+        if fit_type == "linear" or fit_type.startswith("bayesian") and "linear" in fit_type:
+            slope, intercept = params[:2] if len(params) >= 2 else (params[0], 0)
             return slope * x + intercept
-        elif fit_type.startswith("polynomial"):
+        elif fit_type.startswith("polynomial") or (fit_type.startswith("bayesian") and "polynomial" in fit_type):
             return np.polyval(params, x)
         elif fit_type == "exponential":
             a, b = params
