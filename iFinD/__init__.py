@@ -184,3 +184,38 @@ class IFinD(object):
         data = response.json()
         data_list = [item for sublist in data['data'] for item in sublist]
         return data_list
+
+    def get_nature_of_business(self, codes):
+        # 企业性质
+        headers = {
+            "Accept": "application/json, text/plain, */*",
+            "Origin": "http://ft.51ifind.com",
+            "User-Agent": "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36",
+            "Content-Type": "application/json",
+            "Referer": "http://ft.51ifind.com/gwstatic/static/data_browser/data-browser/index.html?type=bond",
+            "Accept-Language": "zh-CN,zh;q=0.9,zh-TW;q=0.8,en;q=0.7"
+        }
+
+        payload = {
+            'calculate': [],
+            "customIndList": [],
+            'requests': [
+                {
+                    'item': '06790',
+                    'indexKey': 'p0',
+                    'params': []
+                },
+            ],
+            'codes': codes
+        }
+
+        response = requests.post(
+            'http://ft.51ifind.com/standardgwapi/data_browser_web/index_query/index/calculate',
+            cookies=self.cookie,
+            headers=headers,
+            json=payload,
+        )
+
+        data = response.json()
+        data_list = [item for sublist in data['data'] for item in sublist]
+        return data_list

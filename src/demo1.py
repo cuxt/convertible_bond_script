@@ -23,8 +23,8 @@ days_ahead = 4 - today.weekday()
 
 # current_friday_date = today + timedelta(days=days_ahead)
 # last_friday_date = current_friday_date - timedelta(days=7)
-current_friday_date = datetime.date(2025, 1, 27)
-last_friday_date = datetime.date(2024, 9, 13)
+current_friday_date = datetime.date(2025, 7, 12)
+last_friday_date = datetime.date(2018, 1, 1)
 
 start_date = last_friday_date.strftime("%Y%m%d")
 end_date = current_friday_date.strftime("%Y%m%d")
@@ -38,7 +38,7 @@ bond_calc = BondCalc()
 
 def main():
     # 配置文件地址
-    config_path = root_path / "config" / "demo" / "test.toml"
+    config_path = root_path / "config" / "demo" / "demo1.toml"
 
     if current_friday_date < last_friday_date:
         raise Exception("日期设置错误")
@@ -121,11 +121,14 @@ def fetch_data(start_date, end_date):
         save_to_csv(data_pool, basic_data, current_date_str)
 
         file_path = root_path / "data" / f"{current_date_str}.csv"
-        # 隐含波动率
         df = pd.read_csv(file_path)
         codes = df["代码"].tolist()
+        # 隐含波动率
         implied_volatility = iFind.get_implied_volatility(codes, current_date_str)
         df["隐含波动率"] = implied_volatility
+        # 企业性质
+        nature_of_business = iFind.get_nature_of_business(codes)
+        df["发行人企业性质"] = nature_of_business
         df.to_csv(file_path, index=False, encoding="utf-8")
 
 

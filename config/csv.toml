@@ -43,3 +43,4 @@ strict_mode = false
 "债券最新评级" = "string"
 "债券余额" = "float"
 "隐含波动率" = "float"
+"发行人企业性质" = "string"
